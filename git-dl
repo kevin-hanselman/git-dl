@@ -26,4 +26,4 @@ trap 'rm -rf $temp_dir' EXIT
 
 git clone --depth 1 "$@" "$repo_url" "$temp_dir"
 
-cp -v "${temp_dir}/${filepath}" .
+cp -iv "${temp_dir}/${filepath}" .
