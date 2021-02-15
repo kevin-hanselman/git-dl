@@ -1,0 +1,29 @@
+#!/bin/bash
+set -eo pipefail
+
+if [ "$EUID" -eq 0 ]; then
+    >&2 echo 'refusing to run as root'
+    exit 1
+fi
+
+repo_url=$1
+filepath=$2
+set -u
+
+usage() {
+    >&2 echo 'usage: git-dl <git-repo-url> <file-path> [git-clone-args...]'
+    exit 1
+}
+
+[ -n "$repo_url" ] || usage
+[ -n "$filepath" ] || usage
+
+shift 2
+
+temp_dir=$(mktemp -d git-dl-XXXXX)
+
+trap 'rm -rf $temp_dir' EXIT
+
+git clone --depth 1 "$@" "$repo_url" "$temp_dir"
+
+cp -v "${temp_dir}/${filepath}" .
